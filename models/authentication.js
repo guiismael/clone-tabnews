@@ -1,6 +1,6 @@
-import { NotFoundError, UnauthorizedError } from "infra/errors";
-import password from "models/password";
-import user from "models/user";
+import { NotFoundError, UnauthorizedError } from "infra/errors.js";
+import password from "models/password.js";
+import user from "models/user.js";
 
 async function getAuthenticatedUser(providedEmail, providedPassword) {
   try {
