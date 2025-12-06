@@ -1,7 +1,7 @@
 import * as cookie from "cookie";
 
 import {
-  ForbidderError,
+  ForbiddenError,
   InternalServerError,
   MethodNotAllowedError,
   NotFoundError,
@@ -19,7 +19,7 @@ function onNoMatchHandler(request, response) {
 
 function onErrorHandler(error, request, response) {
   if (
-    error instanceof ForbidderError ||
+    error instanceof ForbiddenError ||
     error instanceof NotFoundError ||
     error instanceof ValidationError
   ) {
@@ -102,7 +102,7 @@ function canRequest(feature) {
       return next();
     }
 
-    throw new ForbidderError({
+    throw new ForbiddenError({
       message: "Você não possui permissão para execultar esta ação.",
       action: `Verifique se o seu usuário possui a feature "${feature}".`,
     });

@@ -79,12 +79,12 @@ export class NotFoundError extends Error {
   }
 }
 
-export class ForbidderError extends Error {
+export class ForbiddenError extends Error {
   constructor({ cause, message, action }) {
     super(message || "Acesso negado.", {
       cause,
     });
-    this.name = "ForbidderError";
+    this.name = "ForbiddenError";
     this.action =
       action || "Verifique as features necessárias antes de continuar.";
     this.statusCode = 403;
