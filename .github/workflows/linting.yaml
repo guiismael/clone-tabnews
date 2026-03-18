@@ -11,11 +11,12 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "lts/hydrogen"
+          node-version-file: "package.json"
 
       - run: npm ci
 
       - run: npm run lint:prettier:check
+
   eslint:
     name: ESLint
     runs-on: ubuntu-latest
@@ -24,7 +25,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "lts/hydrogen"
+          node-version-file: "package.json"
 
       - run: npm ci
 
@@ -40,7 +41,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "lts/hydrogen"
+          node-version-file: "package.json"
 
       - run: npm ci
       - run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose

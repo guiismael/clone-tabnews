@@ -21,6 +21,7 @@ async function listPendingMigrations() {
       ...defaultMigrationOptions,
       dbClient,
     });
+
     return pendingMigrations;
   } finally {
     await dbClient?.end();
