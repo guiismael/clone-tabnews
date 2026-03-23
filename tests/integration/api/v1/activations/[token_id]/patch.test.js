@@ -1,5 +1,6 @@
 import { version as uuidVersion } from "uuid";
 
+import webserver from "infra/webserver.js";
 import activation from "models/activation.js";
 import user from "models/user.js";
 import orchestrator from "tests/orchestrator.js";
@@ -14,11 +15,12 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
   describe("Anonymous user", () => {
     test("With nonexistent token", async () => {
       const response = await fetch(
-        "http://localhost:3000/api/v1/activations/029a5195-9b63-47cb-84a4-9c8269ac1ee5",
+        `${webserver.origin}/api/v1/activations/029a5195-9b63-47cb-84a4-9c8269ac1ee5`,
         {
           method: "PATCH",
         },
       );
+
       expect(response.status).toBe(404);
 
       const responseBody = await response.json();
@@ -43,11 +45,12 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
       jest.useRealTimers();
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/activations/${expiredActivationToken.id}`,
+        `${webserver.origin}/api/v1/activations/${expiredActivationToken.id}`,
         {
           method: "PATCH",
         },
       );
+
       expect(response.status).toBe(404);
 
       const responseBody = await response.json();
@@ -66,19 +69,21 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
       const expiredActivationToken = await activation.create(createdUser.id);
 
       const response1 = await fetch(
-        `http://localhost:3000/api/v1/activations/${expiredActivationToken.id}`,
+        `${webserver.origin}/api/v1/activations/${expiredActivationToken.id}`,
         {
           method: "PATCH",
         },
       );
+
       expect(response1.status).toBe(200);
 
       const response2 = await fetch(
-        `http://localhost:3000/api/v1/activations/${expiredActivationToken.id}`,
+        `${webserver.origin}/api/v1/activations/${expiredActivationToken.id}`,
         {
           method: "PATCH",
         },
       );
+
       expect(response2.status).toBe(404);
 
       const response2Body = await response2.json();
@@ -97,11 +102,12 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
       const activationToken = await activation.create(createdUser.id);
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/activations/${activationToken.id}`,
+        `${webserver.origin}/api/v1/activations/${activationToken.id}`,
         {
           method: "PATCH",
         },
       );
+
       expect(response.status).toBe(200);
 
       const responseBody = await response.json();
@@ -132,6 +138,7 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
       expect(expiresAt - createdAt).toBe(activation.EXPIRATION_IN_MILLISECONDS);
 
       const activatedUser = await user.findOneById(responseBody.user_id);
+
       expect(activatedUser.features).toEqual([
         "create:session",
         "read:session",
@@ -145,11 +152,12 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
       const activationToken = await activation.create(createdUser.id);
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/activations/${activationToken.id}`,
+        `${webserver.origin}/api/v1/activations/${activationToken.id}`,
         {
           method: "PATCH",
         },
       );
+
       expect(response.status).toBe(403);
 
       const responseBody = await response.json();
@@ -167,13 +175,13 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
     test("With valid token, but already logged in used", async () => {
       const user1 = await orchestrator.createUser();
       await orchestrator.activateUser(user1);
-      const user1SessionObject = await orchestrator.createSession(user1.id);
+      const user1SessionObject = await orchestrator.createSession(user1);
 
       const user2 = await orchestrator.createUser();
       const user2ActivationToken = await activation.create(user2.id);
 
       const response = await fetch(
-        `http://localhost:3000/api/v1/activations/${user2ActivationToken.id}`,
+        `${webserver.origin}/api/v1/activations/${user2ActivationToken.id}`,
         {
           method: "PATCH",
           headers: {
@@ -181,6 +189,7 @@ describe("PATCH /api/v1/activations/[token_id]", () => {
           },
         },
       );
+
       expect(response.status).toBe(403);
 
       const responseBody = await response.json();

@@ -17,7 +17,7 @@ describe("Use case: Registration Flow (all successful)", () => {
 
   test("Create user account", async () => {
     const createdUserResponse = await fetch(
-      "http://localhost:3000/api/v1/users",
+      `${webserver.origin}/api/v1/users`,
       {
         method: "POST",
         headers: {
@@ -30,6 +30,7 @@ describe("Use case: Registration Flow (all successful)", () => {
         }),
       },
     );
+
     expect(createdUserResponse.status).toBe(201);
 
     createdUserResponseBody = await createdUserResponse.json();
@@ -66,11 +67,12 @@ describe("Use case: Registration Flow (all successful)", () => {
 
   test("Activate account", async () => {
     const activationResponse = await fetch(
-      `http://localhost:3000/api/v1/activations/${activationTokenId}`,
+      `${webserver.origin}/api/v1/activations/${activationTokenId}`,
       {
         method: "PATCH",
       },
     );
+
     expect(activationResponse.status).toBe(200);
 
     const activationResponseBody = await activationResponse.json();
@@ -86,8 +88,8 @@ describe("Use case: Registration Flow (all successful)", () => {
   });
 
   test("Login", async () => {
-    const createSessionResponse = await fetch(
-      "http://localhost:3000/api/v1/sessions",
+    const createdSessionResponse = await fetch(
+      `${webserver.origin}/api/v1/sessions`,
       {
         method: "POST",
         headers: {
@@ -99,19 +101,21 @@ describe("Use case: Registration Flow (all successful)", () => {
         }),
       },
     );
-    expect(createSessionResponse.status).toBe(201);
 
-    createdSessionResponseBody = await createSessionResponse.json();
+    expect(createdSessionResponse.status).toBe(201);
+
+    createdSessionResponseBody = await createdSessionResponse.json();
 
     expect(createdSessionResponseBody.user_id).toBe(createdUserResponseBody.id);
   });
 
   test("Get user information", async () => {
-    const userResponse = await fetch("http://localhost:3000/api/v1/user", {
+    const userResponse = await fetch(`${webserver.origin}/api/v1/user`, {
       headers: {
         cookie: `session_id=${createdSessionResponseBody.token}`,
       },
     });
+
     expect(userResponse.status).toBe(200);
 
     const userResponseBody = await userResponse.json();
